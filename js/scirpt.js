@@ -9,12 +9,6 @@ enemy_one.src = 'images/enemy_1.png';
 const enemy_two = new Image();
 enemy_two.src = 'images/enemy_2.png';
 
-const enemy_three = new Image();
-enemy_three.src = 'images/enemy_3.png';
-
-const enemy_four = new Image();
-enemy_four.src = 'images/enemy_4.png';
-
 const background = new Image();
 background.src = 'images/background.jpg';
 
@@ -27,7 +21,8 @@ const penguin = {
     width: 50,
     //penguins jumping force
     force: 20,
-    score: 0
+    score: 0,
+    change: 0
 };
 
 const background_loop = {
@@ -36,9 +31,6 @@ const background_loop = {
     },
     two: {
         x: canvas.width
-    },
-    three: {
-        x: -canvas.height
     }
 };
 
@@ -53,24 +45,10 @@ const enemy = {
         done: 0
     },
     enemy2: {
-        x: canvas.width + 500,
+        x: canvas.width + 750,
         y: 554,
         height: 125,
         width: 95,
-        done: 0
-    },
-    enemy3: {
-        x: canvas.width + 1000,
-        y: 535,
-        height: 150,
-        width: 75,
-        done: 0
-    },
-    enemy4: {
-        x: canvas.width + 1500,
-        y: 590,
-        height: 100,
-        width: 100,
         done: 0
     }
 };
@@ -87,17 +65,13 @@ function drawer() {
 
     //drawing enemies
     context.drawImage(enemy_one, enemy.enemy1.x, enemy.enemy1.y, enemy.enemy1.width, enemy.enemy1.height);
-    context.drawImage(enemy_two, enemy.enemy2.x, enemy.enemy2.y, enemy.enemy2.width, enemy.enemy2.height);
-    context.drawImage(enemy_three, enemy.enemy3.x, enemy.enemy3.y, enemy.enemy3.width, enemy.enemy3.height);
-    context.drawImage(enemy_four, enemy.enemy4.x, enemy.enemy4.y, enemy.enemy4.width, enemy.enemy4.height);
+    context.drawImage(enemy_two, enemy.enemy2.x, enemy.enemy2.y, enemy.enemy2.width, enemy.enemy2.height)
 
 }
 
     function updater() {
         enemy.enemy1.x -= 5;
         enemy.enemy2.x -= 5;
-        enemy.enemy3.x -= 5;
-        enemy.enemy4.x -= 5;
 
         background_loop.one.x -= 5;
 
@@ -111,20 +85,29 @@ function drawer() {
             background_loop.two.x = canvas.width;
         }
 
-        if (enemy.enemy1.x <= -750) {
+        if (enemy.enemy1.x <= -enemy.enemy1.width) {
             enemy.enemy1.x = canvas.width;
         }
 
-        if (enemy.enemy2.x <= -750) {
+        if (enemy.enemy2.x <= -enemy.enemy1.width) {
             enemy.enemy2.x = canvas.width;
         }
 
-        if (enemy.enemy3.x <= -750) {
-            enemy.enemy3.x = canvas.width;
-        }
-
-        if (enemy.enemy4.x <= -750) {
-            enemy.enemy4.x = canvas.width;
+        if(penguin.score % 10 === 0 && penguin.score !== 0 && penguin.change !== penguin.score){
+            if(enemy.enemy1.width === 150){
+                background.src = 'images/background_2.jpg';
+                enemy.enemy1.width = 75;
+                enemy.enemy1.height = 125;
+                enemy_one.src = 'images/enemy_3.png';
+                enemy_two.src = 'images/enemy_4.png';
+            }else{
+                background.src = 'images/background.jpg';
+                enemy.enemy1.width = 150;
+                enemy.enemy1.height = 100;
+                enemy_one.src = 'images/enemy_1.png';
+                enemy_two.src = 'images/enemy_2.png';
+            }
+            penguin.change = penguin.score;
         }
 
     }
@@ -166,84 +149,41 @@ function drawer() {
 
     function collision_checker() {
         //Checking collision with enemy 1
-        if (penguin.x >= enemy.enemy1.x - 40 && penguin.x <= enemy.enemy1.x + 140) {
+        if (penguin.x >= enemy.enemy1.x - 40 && penguin.x <= enemy.enemy1.x + enemy.enemy1.width - 10) {
             if (penguin.y >= 475 - (penguin.force - 25)) {
                 alert("You lost");
             }
         }
 
         //Checking collision with enemy 2
-        if (penguin.x >= enemy.enemy2.x - 40 && penguin.x <= enemy.enemy2.x + 85) {
+        if (penguin.x >= enemy.enemy2.x - 40 && penguin.x <= enemy.enemy2.x + enemy.enemy2.width - 10) {
             if (penguin.y >= 425 - (penguin.force - 20)) {
                 alert("You lost");
             }
         }
 
-        //Checking collision with enemy 3
-        if (penguin.x >= enemy.enemy3.x - 40 && penguin.x <= enemy.enemy3.x + 65) {
-            if (penguin.y >= 400 - (penguin.force - 20)) {
-                alert("You lost");
-            }
-        }
-
-        //Checking collision with enemy 4
-        if (penguin.x >= enemy.enemy4.x - 40 && penguin.x <= enemy.enemy4.x + 90) {
-            if (penguin.y >= 450 - (penguin.force - 20)) {
-                alert("You lost");
-            }
-        }
     }
 
 
     function score_checker() {
-        if (penguin.x >= enemy.enemy1.x - 40 && penguin.x <= enemy.enemy1.x + 140) {
+        if (penguin.x >= enemy.enemy1.x - 40 && penguin.x <= enemy.enemy1.x + enemy.enemy1.width - 10) {
             if (penguin.y <= 475 - (penguin.force - 20)) {
                 if (enemy.enemy1.done === 0) {
                     penguin.score++;
                     score_field.innerHTML = penguin.score;
                     enemy.enemy1.done = 1;
                 }
-                enemy.enemy3.done = 0;
                 enemy.enemy2.done = 0;
-                enemy.enemy4.done = 0;
             }
         }
 
-        if (penguin.x >= enemy.enemy2.x - 40 && penguin.x <= enemy.enemy2.x + 85) {
+        if (penguin.x >= enemy.enemy2.x - 40 && penguin.x <= enemy.enemy2.x + enemy.enemy2.width - 10) {
             if (penguin.y <= 425 - (penguin.force - 20)) {
                 if (enemy.enemy2.done === 0) {
                     penguin.score++;
                     score_field.innerHTML = penguin.score;
                     enemy.enemy2.done = 1;
                 }
-                enemy.enemy1.done = 0;
-                enemy.enemy3.done = 0;
-                enemy.enemy4.done = 0;
-            }
-        }
-
-        if (penguin.x >= enemy.enemy3.x - 40 && penguin.x <= enemy.enemy3.x + 65) {
-            if (penguin.y <= 400 - (penguin.force - 20)) {
-                if (enemy.enemy3.done === 0) {
-                    penguin.score++;
-                    score_field.innerHTML = penguin.score;
-                    enemy.enemy3.done = 1;
-                }
-                enemy.enemy2.done = 0;
-                enemy.enemy1.done = 0;
-                enemy.enemy4.done = 0;
-            }
-        }
-
-        if (penguin.x >= enemy.enemy4.x - 40 && penguin.x <= enemy.enemy4.x + 90) {
-            if (penguin.y <= 450 - (penguin.force - 20)) {
-                if (enemy.enemy4.done === 0) {
-                    penguin.score++;
-                    score_field.innerHTML = penguin.score;
-                    enemy.enemy4.done = 1;
-                }
-                enemy.enemy2.done = 0;
-                enemy.enemy3.done = 0;
                 enemy.enemy1.done = 0;
             }
         }
