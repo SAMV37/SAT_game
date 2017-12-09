@@ -30,6 +30,18 @@ const penguin = {
     score: 0
 };
 
+const background_loop = {
+    one: {
+        x: 0
+    },
+    two: {
+        x: canvas.width
+    },
+    three: {
+        x: -canvas.height
+    }
+};
+
 score_field.innerHTML = penguin.score;
 
 const enemy = {
@@ -64,9 +76,16 @@ const enemy = {
 };
 
 function drawer() {
-    context.drawImage(background, 0, 0, canvas.width, canvas.height);
-    context.fillStyle = 'black';
+    context.clearRect(0,0,canvas.width, canvas.height);
+
+    //drawing background
+    context.drawImage(background, background_loop.one.x, 0, canvas.width, canvas.height);
+    context.drawImage(background, background_loop.two.x, 0, canvas.width, canvas.height);
+
+    //drawing hero
     context.fillRect(penguin.x, penguin.y, penguin.width, penguin.height);
+
+    //drawing enemies
     context.drawImage(enemy_one, enemy.enemy1.x, enemy.enemy1.y, enemy.enemy1.width, enemy.enemy1.height);
     context.drawImage(enemy_two, enemy.enemy2.x, enemy.enemy2.y, enemy.enemy2.width, enemy.enemy2.height);
     context.drawImage(enemy_three, enemy.enemy3.x, enemy.enemy3.y, enemy.enemy3.width, enemy.enemy3.height);
@@ -79,6 +98,18 @@ function drawer() {
         enemy.enemy2.x -= 5;
         enemy.enemy3.x -= 5;
         enemy.enemy4.x -= 5;
+
+        background_loop.one.x -= 5;
+
+        if(background_loop.one.x <= -canvas.width){
+            background_loop.one.x = canvas.width;
+        }
+
+        background_loop.two.x -= 5;
+
+        if(background_loop.two.x <= -canvas.width){
+            background_loop.two.x = canvas.width;
+        }
 
         if (enemy.enemy1.x <= -750) {
             enemy.enemy1.x = canvas.width;
